@@ -1,4 +1,8 @@
 {
   "name": "code-challenge-asana",
   "version": "1.0.0",
+  "devDependencies": {
+    "gulp": "3.9.1",
+    "gulp-watch": "4.3.11"
+  }
 }
