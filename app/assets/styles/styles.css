@@ -1,0 +1,10 @@
+$mainBlue: #2f5572;
+
+body {
+  color: $mainBlue;
+  padding: .75rem;
+
+  a {
+    color: $mainBlue;
+  }
+}
