@@ -12,5 +12,11 @@ gulp.task("styles", function () {
 
   // add for CSS webkits, vars, nested CSS, importing files so CSS doesn't have to make different calls
   .pipe(postcss([cssImport, cssVars, nested, autoprefixer]))
+
+  // add error handling so watch doesn't stop
+  .on("error", function (errorInfo) {
+    console.log(errorInfo.toString());
+    this.emit("end");
+  })
   .pipe(gulp.dest("./app/temp/styles"));
 });
