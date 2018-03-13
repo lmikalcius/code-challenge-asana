@@ -5,7 +5,12 @@ body {
   margin: 0;
 }
   html p, body p {
-    color: #f6f8f9;
+    color: black;
+  }
+  @media(min-width: 530px) {
+  html p, body p {
+      color: #f6f8f9
+  }
   }
 .header__logo {
     width: 20%;

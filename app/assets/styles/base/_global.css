@@ -1,7 +1,10 @@
 html,
 body {
   p {
-    color: $asanaGray;
+    color: black;
+    @mixin atLeastDesktop {
+      color: $asanaGray;
+    }
   }
   height: 100%;
   padding: 0;
