@@ -1,6 +1,7 @@
 var gulp = require("gulp");
 var watch = require("gulp-watch");
-var browserSync = require("browser-sync").create(); // require in only the create method
+// require in only the create method
+var browserSync = require("browser-sync").create();
 
 gulp.task("watch", function () {
   // spin up web server

@@ -76,13 +76,10 @@ var _Task2 = _interopRequireDefault(_Task);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-alert("testing ABC!@#");
 var firstTask = new _Task2.default("Code a lot", 234189);
-var secondTask = new _Task2.default("Code a little", 123221);
-console.log(secondTask.task, secondTask.id);
 console.log(firstTask.task, firstTask.id);
 
-fetch('http://httpbin.org/get').then(function (response) {
+fetch('http://echo.jsontest.com/title/ipsum/content/blah').then(function (response) {
   return response.json();
 }).then(function (myJson) {
   console.log(myJson);
