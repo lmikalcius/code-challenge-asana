@@ -23,7 +23,6 @@ body {
 
   display: inline-block;
   margin-top: .5rem;
-  height: 45%;
   text-align: center;
   border: 1px solid gray;
   border-radius: 15px;
@@ -36,13 +35,18 @@ body {
   vertical-align: top;
   /* this is done to prevent the boxes from staggering */
 
-
-  width: 33%;
+  width: 100%;
+  height: 35%;
 }
 .task--inview {
     opacity: 1;
   }
-/* can't do 33.3% unless white space is deleted in HTML, known "bug" */
+@media(min-width: 530px) {
+.task {
+      height: 45%;
+      width: 33%
+}
+  }
 .task:hover {
     background-color: #ffb985;
   }
