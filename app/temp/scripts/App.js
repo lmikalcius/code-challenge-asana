@@ -74,16 +74,30 @@ var _Task = __webpack_require__(1);
 
 var _Task2 = _interopRequireDefault(_Task);
 
+var _queryParam = __webpack_require__(2);
+
+var _queryParam2 = _interopRequireDefault(_queryParam);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+console.log((0, _queryParam2.default)("project"));
+// http://localhost:3000/?project=568228076648642
+
+var projectNumber = (0, _queryParam2.default)("project");
+if (projectNumber) {
+                  window.location = "https://app.asana.com/-/oauth_authorize?" + "client_id=123&" + "redirect_uri=https://myapp.com/oauth&" + "response_type=token&" + "state=projectNumber";
+}
 
 var firstTask = new _Task2.default("Code a lot", 234189);
 console.log(firstTask.task, firstTask.id);
 
-fetch('http://echo.jsontest.com/title/ipsum/content/blah').then(function (response) {
-  return response.json();
-}).then(function (myJson) {
-  console.log(myJson);
-});
+// fetch('http://echo.jsontest.com/title/ipsum/content/blah')
+//   .then(function(response) {
+//     return response.json();
+//   })
+//   .then(function(myJson) {
+//     console.log(myJson);
+//   });
 
 /***/ }),
 /* 1 */
@@ -106,6 +120,28 @@ var Task = function Task(task, id) {
 };
 
 exports.default = Task;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function getParameterByName(key) {
+    var url = window.location.href;
+    var match = url.match('[?&]' + key + '=([^&]+)');
+    return match ? match[1] : null;
+}
+
+exports.default = getParameterByName;
+
+// query string: ?foo=lorem&bar=&baz
+// var foo = getParameterByName('foo');
+// returns "lorem"
 
 /***/ })
 /******/ ]);
