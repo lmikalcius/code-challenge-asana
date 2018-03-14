@@ -51,9 +51,43 @@ window.onload = function() {
     }
   }
 
-  document.onscroll = updateInView;
+  window.onscroll = updateInView;
 
   updateInView();
+
+
+
+  var hide_icons = document.getElementsByClassName("task__hide");
+  console.log(hide_icons[0]);
+
+  for (var i = 0; i < hide_icons.length; ++i) {
+    hide_icons[i].onclick = function(){
+      this.parentNode.parentNode.removeChild(this.parentNode);
+      console.log(updateInView);
+      updateInView();
+      return false;
+    };
+  }
+
+
+  // document.getElementsByClassName("task__hide")[0].onclick = function(){
+  //   console.log("SUUUP");
+  //   this.parentNode.parentNode.removeChild(this.parentNode);
+  //   console.log(updateInView);
+  //   updateInView();
+  //   return false;
+  // };
+
+  // var classname = document.getElementsByClassName("classname");
+
+  // var myFunction = function() {
+  //     var attribute = this.getAttribute("data-myattribute");
+  //     alert(attribute);
+  // };
+
+  // for (var i = 0; i < classname.length; i++) {
+  //     classname[i].addEventListener('click', myFunction, false);
+  // }
 
 }
 
