@@ -8,5 +8,19 @@ module.exports = {
     path: path.resolve(__dirname, "./app/temp/scripts"),
     // name of new bundled file
     filename: "App.js"
+  },
+  module: {
+    loaders: [
+      {
+        loader: "babel-loader",
+        query: {
+          presets: ["es2015"]
+        },
+        // only apply to JS files
+        test: /\.js$/,
+        // don't compile node modules
+        exclude: /node_modules/
+      }
+    ]
   }
 }

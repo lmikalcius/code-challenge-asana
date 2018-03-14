@@ -1,6 +1,8 @@
-function Task(task, id) {
-  this.task = task;
-  this.id = id;
+class Task {
+  constructor(task, id) {
+    this.task = task;
+    this.id = id;
+  }
 }
 
-module.exports = Task;
+export default Task;
