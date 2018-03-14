@@ -1,25 +1,15 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  background-color: #f6f8f9;
-}
-.header__logo {
-    width: 50%;
-  }
-@media(min-width: 530px) {
-.header__logo {
-      width: 30%
-  }
-  }
 .tasks {
   height: 100%;
   width: 100%
 }
+
 .task {
   opacity: 0.0;
-  -webkit-transition: opacity 1.6s;
   transition: opacity 1.6s;
+
+  &--inview {
+    opacity: 1;
+  }
 
   display: inline-block;
   margin-top: .5rem;
@@ -29,8 +19,7 @@ body {
   border-radius: 15px;
   position: relative;
   background-color: #fdd3b4;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   padding: 1.9rem .5rem 0 .5rem;
 
   vertical-align: top;
@@ -38,30 +27,35 @@ body {
 
 
   width: 33%;
-}
-.task--inview {
-    opacity: 1;
-  }
-/* can't do 33.3% unless white space is deleted in HTML, known "bug" */
-.task:hover {
+  /* can't do 33.3% unless white space is deleted in HTML, known "bug" */
+
+
+  &:hover {
     background-color: #ffb985;
   }
-.task__title {
+
+
+  &__title {
     margin-top: 2.5rem;
   }
-.task__hide {
+
+
+  &__hide {
     position: absolute;
     top: 0;
     right: 5%;
     color: gray;
-  }
-.task__hide:hover {
+
+    &:hover {
       color: white;
     }
-.task__hide:after{
+
+    &:after{
       display: inline-block;
       font-size: 2.5rem;
 
       content: "\00d7";
       /* This will render the 'X' */
     }
+  }
+}
