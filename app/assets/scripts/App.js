@@ -1,42 +1,45 @@
 import Task from "./modules/Task";
+import asanaData from "./modules/Model";
 import getParameterByName from "./modules/query-param";
 
-console.log(getParameterByName("project"));
-// http://localhost:3000/?project=568228076648642
+function insert_divs(data) {
+  var parent = document.getElementById("tasks");
+  data.forEach(function(asanaTask){
 
-var projectNumber = getParameterByName("project");
-if (projectNumber) {
-  window.location = "https://app.asana.com/-/oauth_authorize?" +
-                    "client_id=123&" +
-                    "redirect_uri=https://myapp.com/oauth&" +
-                    "response_type=token&" +
-                    "state=projectNumber"
-} else {
-  // new model
-  // new view
+    var task = document.createElement('div');
+    task.className += "task";
+    var url = "window.open('https://app.asana.com/0/568228076648642/" + asanaTask.id.toString() + "', '_blank')";
+    task.setAttribute('onclick', url);
+
+    var taskTitle = document.createElement('p');
+    taskTitle.className += "task__title";
+    console.log(asanaTask)
+    taskTitle.innerHTML = asanaTask.name.toString();
+
+    var closeIcon = document.createElement('div');
+    closeIcon.className += "task__hide";
+
+
+    task.appendChild(taskTitle);
+    task.appendChild(closeIcon);
+
+    parent.appendChild(task);
+
+  });
 }
-
-
 
 
 
 
 window.onload = function() {
 
-  var section = document.getElementsByClassName('tasks')[0];
-  // console.log(section);
-  // console.log(document.body);
-  // document.body.appendChild(section);
-  // for (let x = 1; x <= 55; x ++) {
-  //   let d = document.createElement('div');
-  //   d.innerText = `Hello there div line ${x} of 55`;
-  //   if (x > 3 && x < 25) { d.className += " ptask"; }
-  //   d.className += " task";
-  //   section.appendChild(d);
-  // }
+
+  insert_divs(asanaData);
+
+  var taskContainer = document.getElementById('tasks');
 
   function inView (el) {
-    var sb = section.getBoundingClientRect();
+    var sb = taskContainer.getBoundingClientRect();
     var eb = el.getBoundingClientRect();
     return eb.top < sb.height;
   }
@@ -63,31 +66,11 @@ window.onload = function() {
   for (var i = 0; i < hide_icons.length; ++i) {
     hide_icons[i].onclick = function(){
       this.parentNode.parentNode.removeChild(this.parentNode);
-      console.log(updateInView);
       updateInView();
+      event.stopPropagation();
       return false;
     };
   }
-
-
-  // document.getElementsByClassName("task__hide")[0].onclick = function(){
-  //   console.log("SUUUP");
-  //   this.parentNode.parentNode.removeChild(this.parentNode);
-  //   console.log(updateInView);
-  //   updateInView();
-  //   return false;
-  // };
-
-  // var classname = document.getElementsByClassName("classname");
-
-  // var myFunction = function() {
-  //     var attribute = this.getAttribute("data-myattribute");
-  //     alert(attribute);
-  // };
-
-  // for (var i = 0; i < classname.length; i++) {
-  //     classname[i].addEventListener('click', myFunction, false);
-  // }
 
 }
 
@@ -108,3 +91,21 @@ console.log(firstTask.task, firstTask.id);
 //   .then(function(myJson) {
 //     console.log(myJson);
 //   });
+
+
+
+
+console.log(getParameterByName("project"));
+// http://localhost:3000/?project=568228076648642
+
+var projectNumber = getParameterByName("project");
+if (projectNumber) {
+  window.location = "https://app.asana.com/-/oauth_authorize?" +
+                    "client_id=123&" +
+                    "redirect_uri=https://myapp.com/oauth&" +
+                    "response_type=token&" +
+                    "state=projectNumber"
+} else {
+  // new model
+  // new view
+}

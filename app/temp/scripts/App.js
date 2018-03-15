@@ -74,39 +74,48 @@ var _Task = __webpack_require__(1);
 
 var _Task2 = _interopRequireDefault(_Task);
 
-var _queryParam = __webpack_require__(2);
+var _Model = __webpack_require__(2);
+
+var _Model2 = _interopRequireDefault(_Model);
+
+var _queryParam = __webpack_require__(3);
 
 var _queryParam2 = _interopRequireDefault(_queryParam);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-console.log((0, _queryParam2.default)("project"));
-// http://localhost:3000/?project=568228076648642
+function insert_divs(data) {
+  var parent = document.getElementById("tasks");
+  data.forEach(function (asanaTask) {
 
-var projectNumber = (0, _queryParam2.default)("project");
-if (projectNumber) {
-  window.location = "https://app.asana.com/-/oauth_authorize?" + "client_id=123&" + "redirect_uri=https://myapp.com/oauth&" + "response_type=token&" + "state=projectNumber";
-} else {
-  // new model
-  // new view
+    var task = document.createElement('div');
+    task.className += "task";
+    var url = "window.open('https://app.asana.com/0/568228076648642/" + asanaTask.id.toString() + "', '_blank')";
+    task.setAttribute('onclick', url);
+
+    var taskTitle = document.createElement('p');
+    taskTitle.className += "task__title";
+    console.log(asanaTask);
+    taskTitle.innerHTML = asanaTask.name.toString();
+
+    var closeIcon = document.createElement('div');
+    closeIcon.className += "task__hide";
+
+    task.appendChild(taskTitle);
+    task.appendChild(closeIcon);
+
+    parent.appendChild(task);
+  });
 }
 
 window.onload = function () {
 
-  var section = document.getElementsByClassName('tasks')[0];
-  // console.log(section);
-  // console.log(document.body);
-  // document.body.appendChild(section);
-  // for (let x = 1; x <= 55; x ++) {
-  //   let d = document.createElement('div');
-  //   d.innerText = `Hello there div line ${x} of 55`;
-  //   if (x > 3 && x < 25) { d.className += " ptask"; }
-  //   d.className += " task";
-  //   section.appendChild(d);
-  // }
+  insert_divs(_Model2.default);
+
+  var taskContainer = document.getElementById('tasks');
 
   function inView(el) {
-    var sb = section.getBoundingClientRect();
+    var sb = taskContainer.getBoundingClientRect();
     var eb = el.getBoundingClientRect();
     return eb.top < sb.height;
   }
@@ -131,30 +140,11 @@ window.onload = function () {
   for (var i = 0; i < hide_icons.length; ++i) {
     hide_icons[i].onclick = function () {
       this.parentNode.parentNode.removeChild(this.parentNode);
-      console.log(updateInView);
       updateInView();
+      event.stopPropagation();
       return false;
     };
   }
-
-  // document.getElementsByClassName("task__hide")[0].onclick = function(){
-  //   console.log("SUUUP");
-  //   this.parentNode.parentNode.removeChild(this.parentNode);
-  //   console.log(updateInView);
-  //   updateInView();
-  //   return false;
-  // };
-
-  // var classname = document.getElementsByClassName("classname");
-
-  // var myFunction = function() {
-  //     var attribute = this.getAttribute("data-myattribute");
-  //     alert(attribute);
-  // };
-
-  // for (var i = 0; i < classname.length; i++) {
-  //     classname[i].addEventListener('click', myFunction, false);
-  // }
 };
 
 var firstTask = new _Task2.default("Code a lot", 234189);
@@ -167,6 +157,18 @@ console.log(firstTask.task, firstTask.id);
 //   .then(function(myJson) {
 //     console.log(myJson);
 //   });
+
+
+console.log((0, _queryParam2.default)("project"));
+// http://localhost:3000/?project=568228076648642
+
+var projectNumber = (0, _queryParam2.default)("project");
+if (projectNumber) {
+  window.location = "https://app.asana.com/-/oauth_authorize?" + "client_id=123&" + "redirect_uri=https://myapp.com/oauth&" + "response_type=token&" + "state=projectNumber";
+} else {
+  // new model
+  // new view
+}
 
 /***/ }),
 /* 1 */
@@ -192,6 +194,104 @@ exports.default = Task;
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var asanaData = {
+  "data": [{
+    "id": 568228076648643,
+    "name": "[READ ME] Instructions on how to use this template"
+  }, {
+    "id": 568228076648664,
+    "name": ""
+  }, {
+    "id": 568228076648665,
+    "name": ""
+  }, {
+    "id": 568228076648644,
+    "name": "The Basics:"
+  }, {
+    "id": 568228076648645,
+    "name": "Learn how Asana is structured"
+  }, {
+    "id": 568228076648646,
+    "name": "Create or join a project"
+  }, {
+    "id": 568228076648647,
+    "name": "Create tasks"
+  }, {
+    "id": 568228076648648,
+    "name": "Assign a task"
+  }, {
+    "id": 568228076648649,
+    "name": "Add a follower to a task"
+  }, {
+    "id": 568228076648650,
+    "name": "Comment on a task"
+  }, {
+    "id": 568228076648651,
+    "name": "Review your My Tasks list"
+  }, {
+    "id": 568228076648668,
+    "name": "stuff"
+  }, {
+    "id": 568228076648652,
+    "name": "Check your Inbox"
+  }, {
+    "id": 568228076648653,
+    "name": "Advanced Features (optional):"
+  }, {
+    "id": 568228076648678,
+    "name": "this is how you add inside a section"
+  }, {
+    "id": 568228076648654,
+    "name": "Type a colon at the end of this task to create a section:"
+  }, {
+    "id": 568228076648680,
+    "name": "it's apparently in this section too"
+  }, {
+    "id": 568228076648673,
+    "name": "To Be Done Now:"
+  }, {
+    "id": 568228076648674,
+    "name": ""
+  }, {
+    "id": 568228076648672,
+    "name": ""
+  }, {
+    "id": 568228076648671,
+    "name": ""
+  }, {
+    "id": 568228076648655,
+    "name": "Create a subtask"
+  }, {
+    "id": 568228076648658,
+    "name": "@mention tasks, projects, conversations, or teammates"
+  }, {
+    "id": 568228076648659,
+    "name": "Attach files to tasks"
+  }, {
+    "id": 568228076648660,
+    "name": "Likes"
+  }, {
+    "id": 568228076648661,
+    "name": "Watch a 2-minute overview video"
+  }, {
+    "id": 568228076648662,
+    "name": "Get more help on the Asana Guide"
+  }],
+  "next_page": null
+};
+
+exports.default = asanaData.data;
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

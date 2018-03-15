@@ -1,10 +1,11 @@
-.tasks {
+#tasks {
   height: 100%;
   width: 100%
 }
 
 .task {
   opacity: 0.0;
+  /* for fade in effect */
   transition: opacity 1.6s;
 
   &--inview {
@@ -14,10 +15,10 @@
   display: inline-block;
   margin-top: .5rem;
   text-align: center;
-  border: 1px solid gray;
+  border: 1px solid $darkGray;
   border-radius: 15px;
   position: relative;
-  background-color: #fdd3b4;
+  background-color: $paleOrange;
   box-sizing: border-box;
   padding: 1.9rem .5rem 0 .5rem;
 
@@ -26,14 +27,15 @@
 
   width: 100%;
   height: 35%;
-  @mixin atLeastDesktop {
+
+  @mixin desktop {
       height: 45%;
       width: 33%;
   }
 
 
   &:hover {
-    background-color: #ffb985;
+    background-color: $darkOrange;
   }
 
 
@@ -46,7 +48,7 @@
     position: absolute;
     top: 0;
     right: 5%;
-    color: gray;
+    color: $darkGray;
 
     &:hover {
       color: white;
@@ -57,7 +59,7 @@
       font-size: 2.5rem;
 
       content: "\00d7";
-      /* This will render the 'X' */
+      /* This will render the 'X' icon */
     }
   }
 }

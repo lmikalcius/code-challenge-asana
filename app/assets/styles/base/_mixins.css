@@ -1,4 +1,4 @@
-@define-mixin atLeastDesktop {
+@define-mixin desktop {
   @media(min-width: 530px) {
     @mixin-content;
   }

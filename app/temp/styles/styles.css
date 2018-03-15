@@ -12,19 +12,20 @@ body {
       width: 30%
   }
   }
-.tasks {
+#tasks {
   height: 100%;
   width: 100%
 }
 .task {
   opacity: 0.0;
+  /* for fade in effect */
   -webkit-transition: opacity 1.6s;
   transition: opacity 1.6s;
 
   display: inline-block;
   margin-top: .5rem;
   text-align: center;
-  border: 1px solid gray;
+  border: 1px solid #9e9e9e;
   border-radius: 15px;
   position: relative;
   background-color: #fdd3b4;
@@ -57,7 +58,7 @@ body {
     position: absolute;
     top: 0;
     right: 5%;
-    color: gray;
+    color: #9e9e9e;
   }
 .task__hide:hover {
       color: white;
@@ -67,5 +68,5 @@ body {
       font-size: 2.5rem;
 
       content: "\00d7";
-      /* This will render the 'X' */
+      /* This will render the 'X' icon */
     }
