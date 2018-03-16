@@ -1,6 +1,6 @@
 function getParameterByName(key) {
     var url = window.location.href;
-    var match = url.match('[?&]' + key + '=([^&]+)');
+    var match = url.match('[&#?]' + key + '=([^&]+)');
     return match ? match[1] : null;
 }
 

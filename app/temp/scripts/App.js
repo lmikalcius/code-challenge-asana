@@ -70,51 +70,34 @@
 "use strict";
 
 
-var _Task = __webpack_require__(1);
-
-var _Task2 = _interopRequireDefault(_Task);
-
-var _Model = __webpack_require__(2);
+var _Model = __webpack_require__(1);
 
 var _Model2 = _interopRequireDefault(_Model);
 
-var _queryParam = __webpack_require__(3);
+var _queryParam = __webpack_require__(2);
 
 var _queryParam2 = _interopRequireDefault(_queryParam);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function insert_divs(data) {
-  var parent = document.getElementById("tasks");
-  data.forEach(function (asanaTask) {
-
-    var task = document.createElement('div');
-    task.className += "task";
-    var url = "window.open('https://app.asana.com/0/568228076648642/" + asanaTask.id.toString() + "', '_blank')";
-    task.setAttribute('onclick', url);
-
-    var taskTitle = document.createElement('p');
-    taskTitle.className += "task__title";
-    taskTitle.innerHTML = asanaTask.name.toString();
-
-    var closeIcon = document.createElement('div');
-    closeIcon.className += "task__hide";
-
-    task.appendChild(taskTitle);
-    task.appendChild(closeIcon);
-
-    parent.appendChild(task);
-  });
+// Begin oauth implicit grant process if this is initial entry (initial entry will use project as a query param)
+var projectId = (0, _queryParam2.default)("project");
+if (projectId) {
+  window.location = "https://app.asana.com/-/oauth_authorize?" + "client_id=579903436341269&" + "redirect_uri=http://localhost:3000/" + "&response_type=token&" + "state=568228076648642";
 }
 
-var projectNumber = (0, _queryParam2.default)("project");
-if (projectNumber) {
-  window.location = "https://app.asana.com/-/oauth_authorize?" + "client_id=579903436341269&" + "redirect_uri=http://localhost:3000/" + "&response_type=token&" + "state=568228076648642";
-} else {
-  var myHeaders = new Headers();
-  myHeaders.append('Authorization', 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdXRob3JpemF0aW9uIjo1Nzk5MDM1NzUzOTIzMDksInNjb3BlIjoiZGVmYXVsdCBpZGVudGl0eSIsImlhdCI6MTUyMTE1OTczNCwiZXhwIjoxNTIxMTYzMzM0fQ.uj_jABUlGI1PxZPLC9GUwnbZHQ0hCSVSZts30-rsDxQ');
+// Create var for access_token and grab project id again (stored in state query param from oauth) to pass to model
+projectId = (0, _queryParam2.default)("state");
+console.log(projectId);
+var accessToken = (0, _queryParam2.default)("access_token");
+console.log(accessToken);
 
-  fetch('https://app.asana.com/api/1.0/projects/568228076648642/tasks?limit=100', {
+// Begin process of creating model to retrieve project data if authorized
+var myHeaders = new Headers();
+myHeaders.append('Authorization', 'Bearer ' + accessToken);
+
+function firstFetch() {
+  return fetch('https://app.asana.com/api/1.0/projects/568228076648642', {
     method: 'GET',
     headers: myHeaders
   }).then(function (response) {
@@ -122,13 +105,32 @@ if (projectNumber) {
   }).catch(function (error) {
     console.log(error);
   }).then(function (myJson) {
-    console.log(myJson);
+    var projectName = myJson.data.name;
+    console.log(projectName);
+    document.getElementsByClassName("header__project-name")[0].innerHTML = projectName.toString();
+    return projectName;
   });
 }
 
-window.onload = function () {
+console.log(firstFetch().then(function (name) {
+  console.log(name + " BOOOOM");
+}));
 
-  insert_divs(_Model2.default);
+fetch('https://app.asana.com/api/1.0/projects/568228076648642/tasks?limit=100', {
+  method: 'GET',
+  headers: myHeaders
+}).then(function (response) {
+  return response.json();
+}).catch(function (error) {
+  console.log(error);
+}).then(function (myJson) {
+  var aData = myJson.data;
+  insert_divs(aData);
+  doStuff();
+  console.log(myJson);
+});
+
+function doStuff() {
 
   var taskContainer = document.getElementById('tasks');
 
@@ -162,38 +164,37 @@ window.onload = function () {
       return false;
     };
   }
-};
+}
 
-var firstTask = new _Task2.default("Code a lot", 234189);
-console.log(firstTask.task, firstTask.id);
-
-console.log((0, _queryParam2.default)("project"));
+// console.log(getParameterByName("project"));
 // http://localhost:3000/?project=568228076648642
+
+
+function insert_divs(data) {
+  var parent = document.getElementById("tasks");
+  data.forEach(function (asanaTask) {
+
+    var task = document.createElement('div');
+    task.className += "task";
+    var url = "window.open('https://app.asana.com/0/568228076648642/" + asanaTask.id.toString() + "', '_blank')";
+    task.setAttribute('onclick', url);
+
+    var taskTitle = document.createElement('p');
+    taskTitle.className += "task__title";
+    taskTitle.innerHTML = asanaTask.name.toString();
+
+    var closeIcon = document.createElement('div');
+    closeIcon.className += "task__hide";
+
+    task.appendChild(taskTitle);
+    task.appendChild(closeIcon);
+
+    parent.appendChild(task);
+  });
+}
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Task = function Task(task, id) {
-  _classCallCheck(this, Task);
-
-  this.task = task;
-  this.id = id;
-};
-
-exports.default = Task;
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -291,7 +292,7 @@ var asanaData = {
 exports.default = asanaData.data;
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -302,7 +303,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 function getParameterByName(key) {
     var url = window.location.href;
-    var match = url.match('[?&]' + key + '=([^&]+)');
+    var match = url.match('[&#?]' + key + '=([^&]+)');
     return match ? match[1] : null;
 }
 
