@@ -1,9 +1,8 @@
-import asanaData from "./modules/Model";
+import Model from "./modules/Model";
 import getParameterByName from "./modules/query-param";
 
-// Begin oauth implicit grant process if this is initial entry (initial entry will use project as a query param)
-var projectId = getParameterByName("project");
-if (projectId) {
+// If this is an initial entry (user enters URL with query param for the project ID) redirect to begin oauth implicit grant process
+if (getParameterByName("project")) {
   window.location = "https://app.asana.com/-/oauth_authorize?" +
                     "client_id=579903436341269&" +
                     "redirect_uri=http://localhost:3000/" +
@@ -11,58 +10,26 @@ if (projectId) {
                     "state=568228076648642";
 }
 
-// Create var for access_token and grab project id again (stored in state query param from oauth) to pass to model
-projectId = getParameterByName("state");
-console.log(projectId);
+// If this is after an oauth redirect, create variables for access_token and project id (stored in state query param from oauth redirect) to pass to the model
+var projectId = getParameterByName("state");
 var accessToken = getParameterByName("access_token");
-console.log(accessToken);
 
+// Instantiate model and view
+var model = new Model(projectId, accessToken);
 
-
-// Begin process of creating model to retrieve project data if authorized
-var myHeaders = new Headers();
-myHeaders.append('Authorization', 'Bearer ' + accessToken);
-
-
-function firstFetch() {
-  return fetch('https://app.asana.com/api/1.0/projects/568228076648642', {
-    method: 'GET',
-    headers: myHeaders,
-  })
-  .then(function(response) {
-    return response.json();
-  })
-  .catch(function (error) {
-    console.log(error);
-  })
-  .then(function(myJson) {
-    var projectName = myJson.data.name;
-    console.log(projectName);
-    document.getElementsByClassName("header__project-name")[0].innerHTML = projectName.toString();
-    return projectName
-  });
-}
-
-console.log(firstFetch().then(function(name) {
-    console.log(name + " BOOOOM");
-  }));
-
-fetch('https://app.asana.com/api/1.0/projects/568228076648642/tasks?limit=100', {
-  method: 'GET',
-  headers: myHeaders,
-})
-.then(function(response) {
-  return response.json();
-})
-.catch(function (error) {
-  console.log(error);
-})
-.then(function(myJson) {
-  var aData = myJson.data;
-  insert_divs(aData);
-  doStuff();
-  console.log(myJson);
+model.fetchTitle().then(function(projectName) {
+  document.getElementsByClassName("header__project-name")[0].innerHTML = projectName;
+  console.log(projectName + " BOOOOM");
 });
+
+model.fetchTasks().then(function(tasks) {
+  insert_divs(tasks);
+  doStuff();
+  console.log(tasks.toString() + " BOOOOM");
+});
+
+
+
 
 
 
