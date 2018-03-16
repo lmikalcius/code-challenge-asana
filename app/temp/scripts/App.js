@@ -235,7 +235,6 @@ function View() {
   function inView(el) {
     var containerPosition = document.getElementById("tasks").getBoundingClientRect();
     var getTaskPosition = el.getBoundingClientRect();
-    console.log(getTaskPosition.top, containerPosition.height);
     return containerPosition.height > getTaskPosition.top;
   }
 

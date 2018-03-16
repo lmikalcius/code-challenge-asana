@@ -21,6 +21,7 @@ body {
   width: 100%
 }
 .task {
+  cursor: pointer;
   opacity: 0.0;
   /* for fade in effect */
   -webkit-transition: opacity 1s;
