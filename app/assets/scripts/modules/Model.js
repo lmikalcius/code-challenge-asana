@@ -11,8 +11,8 @@ class Model {
     return false;
   }
 
-  // fetch the project's name
-  fetchTitle() {
+  // fetch the project's name from API
+  fetchProjectName() {
     return fetch(this.apiRootUrl, {
       method: 'GET',
       headers: this.header,
@@ -23,11 +23,11 @@ class Model {
     })
     .then(function(json) {
       var projectName = json.data.name;
-      return projectName
+      return projectName;
     });
   }
 
-  // fetch the project's list of tasks that contain id's and titles for each task
+  // fetch the project's list of tasks from API
   fetchTasks() {
     return fetch(this.apiRootUrl + '/tasks?limit=100', {
         method: 'GET',

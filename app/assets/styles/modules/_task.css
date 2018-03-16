@@ -6,7 +6,7 @@
 .task {
   opacity: 0.0;
   /* for fade in effect */
-  transition: opacity 1.6s;
+  transition: opacity 1s;
 
   &--inview {
     opacity: 1;

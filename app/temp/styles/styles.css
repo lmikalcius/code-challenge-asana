@@ -23,8 +23,8 @@ body {
 .task {
   opacity: 0.0;
   /* for fade in effect */
-  -webkit-transition: opacity 1.6s;
-  transition: opacity 1.6s;
+  -webkit-transition: opacity 1s;
+  transition: opacity 1s;
 
   display: inline-block;
   margin-top: .15rem;

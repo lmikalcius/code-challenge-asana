@@ -70,19 +70,24 @@
 "use strict";
 
 
-var _Model = __webpack_require__(1);
+var _queryParam = __webpack_require__(1);
+
+var _queryParam2 = _interopRequireDefault(_queryParam);
+
+var _Model = __webpack_require__(2);
 
 var _Model2 = _interopRequireDefault(_Model);
 
-var _queryParam = __webpack_require__(2);
+var _View = __webpack_require__(3);
 
-var _queryParam2 = _interopRequireDefault(_queryParam);
+var _View2 = _interopRequireDefault(_View);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // If this is an initial entry (user enters URL with query param for the project ID) redirect to begin oauth implicit grant process
-if ((0, _queryParam2.default)("project")) {
-  window.location = "https://app.asana.com/-/oauth_authorize?" + "client_id=579903436341269&" + "redirect_uri=http://localhost:3000/" + "&response_type=token&" + "state=568228076648642";
+var projectParam = (0, _queryParam2.default)("project");
+if (projectParam) {
+  window.location = "https://app.asana.com/-/oauth_authorize?" + "client_id=579903436341269&" + "redirect_uri=http://localhost:3000/" + "&response_type=token&" + "state=" + projectParam;
 }
 
 // If this is after an oauth redirect, create variables for access_token and project id (stored in state query param from oauth redirect) to pass to the model
@@ -91,83 +96,45 @@ var accessToken = (0, _queryParam2.default)("access_token");
 
 // Instantiate model and view
 var model = new _Model2.default(projectId, accessToken);
+var view = new _View2.default();
 
-model.fetchTitle().then(function (projectName) {
-  document.getElementsByClassName("header__project-name")[0].innerHTML = projectName;
-  console.log(projectName + " BOOOOM");
+// Perform get requests for project name and paint it
+model.fetchProjectName().then(function (projectName) {
+  view.populateHeaderTitle(projectName);
 });
 
+// Perform get requests for tasks data and render those along with event listeners
 model.fetchTasks().then(function (tasks) {
-  insert_divs(tasks);
-  doStuff();
-  console.log(tasks.toString() + " BOOOOM");
+  view.renderTasks(tasks, projectId);
+  view.bindTaskVisibility();
+  view.bindCloseIcons();
 });
-
-function doStuff() {
-
-  var taskContainer = document.getElementById('tasks');
-
-  function inView(el) {
-    var sb = taskContainer.getBoundingClientRect();
-    var eb = el.getBoundingClientRect();
-    return eb.top < sb.height;
-  }
-
-  function updateInView() {
-    var tasks = document.querySelectorAll('.task');
-
-    for (var i = 0; i < tasks.length; ++i) {
-      if (inView(tasks[i])) {
-        tasks[i].classList.add('task--inview');
-      };
-    }
-  }
-
-  window.onscroll = updateInView;
-
-  updateInView();
-
-  var hide_icons = document.getElementsByClassName("task__hide");
-
-  for (var i = 0; i < hide_icons.length; ++i) {
-    hide_icons[i].onclick = function () {
-      this.parentNode.parentNode.removeChild(this.parentNode);
-      updateInView();
-      event.stopPropagation();
-      return false;
-    };
-  }
-}
-
-// console.log(getParameterByName("project"));
-// http://localhost:3000/?project=568228076648642
-
-
-function insert_divs(data) {
-  var parent = document.getElementById("tasks");
-  data.forEach(function (asanaTask) {
-
-    var task = document.createElement('div');
-    task.className += "task";
-    var url = "window.open('https://app.asana.com/0/568228076648642/" + asanaTask.id.toString() + "', '_blank')";
-    task.setAttribute('onclick', url);
-
-    var taskTitle = document.createElement('p');
-    taskTitle.className += "task__title";
-    taskTitle.innerHTML = asanaTask.name.toString();
-
-    var closeIcon = document.createElement('div');
-    closeIcon.className += "task__hide";
-
-    task.appendChild(taskTitle);
-    task.appendChild(closeIcon);
-
-    parent.appendChild(task);
-  });
-}
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function getParameterByName(key) {
+    var url = window.location.href;
+    // added '#' character for redirect url
+    var match = url.match('[&#?]' + key + '=([^&]+)');
+    return match ? match[1] : null;
+}
+
+exports.default = getParameterByName;
+
+// query string: ?foo=lorem&bar=&baz
+// var foo = getParameterByName('foo');
+// returns "lorem"
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -200,11 +167,11 @@ var Model = function () {
       return false;
     }
 
-    // fetch the project's name
+    // fetch the project's name from API
 
   }, {
-    key: 'fetchTitle',
-    value: function fetchTitle() {
+    key: 'fetchProjectName',
+    value: function fetchProjectName() {
       return fetch(this.apiRootUrl, {
         method: 'GET',
         headers: this.header
@@ -218,7 +185,7 @@ var Model = function () {
       });
     }
 
-    // fetch the project's list of tasks that contain id's and titles for each task
+    // fetch the project's list of tasks from API
 
   }, {
     key: 'fetchTasks',
@@ -241,27 +208,90 @@ var Model = function () {
 exports.default = Model;
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
-function getParameterByName(key) {
-    var url = window.location.href;
-    // added '#' character for redirect url
-    var match = url.match('[&#?]' + key + '=([^&]+)');
-    return match ? match[1] : null;
+function View() {
+
+  this.populateHeaderTitle = function (text) {
+    var headerTitle = document.getElementsByClassName("header__project-name")[0];
+    headerTitle.innerHTML = text;
+  };
+
+  this.renderTasks = function (data, projectId) {
+    var taskContainer = document.getElementById("tasks");
+
+    // build tasks and append them to tasks container
+    data.forEach(function (asanaTask) {
+      // individual task container
+      var task = document.createElement("div");
+      task.className += "task";
+      // set behavior for clicking on individual task, _blank indicates new window
+      var url = "window.open('https://app.asana.com/0/" + projectId + "/" + asanaTask.id + "', '_blank')";
+      task.setAttribute('onclick', url);
+
+      var taskTitle = document.createElement("p");
+      taskTitle.className += "task__title";
+      taskTitle.innerHTML = asanaTask.name;
+
+      var closeIcon = document.createElement("div");
+      closeIcon.className += "task__hide";
+
+      task.appendChild(taskTitle);
+      task.appendChild(closeIcon);
+      taskContainer.appendChild(task);
+    });
+  };
+
+  // Check to see if individual element is in view, "private" function
+  function inView(el) {
+    var containerPosition = document.getElementById("tasks").getBoundingClientRect();
+    var getTaskPosition = el.getBoundingClientRect();
+    console.log(getTaskPosition.top, containerPosition.height);
+    return containerPosition.height > getTaskPosition.top;
+  }
+
+  // Add task--inview to tasks to make visible if in view (don't remove class to indicate it was previously viewed), "private" function
+  function updateInView() {
+    var tasks = document.querySelectorAll(".task");
+    for (var i = 0; i < tasks.length; ++i) {
+      if (inView(tasks[i])) {
+        tasks[i].classList.add("task--inview");
+      }
+    }
+  }
+
+  this.bindTaskVisibility = function () {
+    // fire initially to show tasks already in view
+    updateInView();
+    // create event listener for scrolling
+    window.onscroll = updateInView;
+  };
+
+  this.bindCloseIcons = function () {
+    var hide_icons = document.getElementsByClassName("task__hide");
+
+    for (var i = 0; i < hide_icons.length; ++i) {
+      console.log("STUFF");
+      hide_icons[i].onclick = function () {
+        this.parentNode.parentNode.removeChild(this.parentNode);
+        // fire to repaint since elements have changed position
+        updateInView();
+        // prevent task click from opening asana
+        event.stopPropagation();
+        return false;
+      };
+    }
+  };
 }
 
-exports.default = getParameterByName;
-
-// query string: ?foo=lorem&bar=&baz
-// var foo = getParameterByName('foo');
-// returns "lorem"
+exports.default = View;
 
 /***/ })
 /******/ ]);
