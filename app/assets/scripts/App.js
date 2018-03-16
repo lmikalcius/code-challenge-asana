@@ -13,7 +13,6 @@ function insert_divs(data) {
 
     var taskTitle = document.createElement('p');
     taskTitle.className += "task__title";
-    console.log(asanaTask)
     taskTitle.innerHTML = asanaTask.name.toString();
 
     var closeIcon = document.createElement('div');
@@ -29,7 +28,31 @@ function insert_divs(data) {
 }
 
 
+var projectNumber = getParameterByName("project");
+if (projectNumber) {
+  window.location = "https://app.asana.com/-/oauth_authorize?" +
+                    "client_id=579903436341269&" +
+                    "redirect_uri=http://localhost:3000/" +
+                    "&response_type=token&" +
+                    "state=568228076648642";
+} else {
+  const myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdXRob3JpemF0aW9uIjo1Nzk5MDM1NzUzOTIzMDksInNjb3BlIjoiZGVmYXVsdCBpZGVudGl0eSIsImlhdCI6MTUyMTE1OTczNCwiZXhwIjoxNTIxMTYzMzM0fQ.uj_jABUlGI1PxZPLC9GUwnbZHQ0hCSVSZts30-rsDxQ');
 
+  fetch('https://app.asana.com/api/1.0/projects/568228076648642/tasks?limit=100', {
+    method: 'GET',
+    headers: myHeaders,
+  })
+  .then(function(response) {
+    return response.json();
+  })
+  .catch(function (error) {
+    console.log(error);
+  })
+  .then(function(myJson) {
+    console.log(myJson);
+  });
+}
 
 window.onload = function() {
 
@@ -61,7 +84,6 @@ window.onload = function() {
 
 
   var hide_icons = document.getElementsByClassName("task__hide");
-  console.log(hide_icons[0]);
 
   for (var i = 0; i < hide_icons.length; ++i) {
     hide_icons[i].onclick = function(){
@@ -84,13 +106,7 @@ window.onload = function() {
 var firstTask = new Task("Code a lot", 234189);
 console.log(firstTask.task, firstTask.id);
 
-// fetch('http://echo.jsontest.com/title/ipsum/content/blah')
-//   .then(function(response) {
-//     return response.json();
-//   })
-//   .then(function(myJson) {
-//     console.log(myJson);
-//   });
+
 
 
 
@@ -98,14 +114,4 @@ console.log(firstTask.task, firstTask.id);
 console.log(getParameterByName("project"));
 // http://localhost:3000/?project=568228076648642
 
-var projectNumber = getParameterByName("project");
-if (projectNumber) {
-  window.location = "https://app.asana.com/-/oauth_authorize?" +
-                    "client_id=123&" +
-                    "redirect_uri=https://myapp.com/oauth&" +
-                    "response_type=token&" +
-                    "state=projectNumber"
-} else {
-  // new model
-  // new view
-}
+
