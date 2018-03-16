@@ -7,6 +7,6 @@ function getParameterByName(key) {
 
 export default getParameterByName;
 
-// query string: ?foo=lorem&bar=&baz
+// USAGE: query string on URL: ?foo=lorem&bar=&baz
 // var foo = getParameterByName('foo');
-// returns "lorem"
+// foo holds the value "lorem"

@@ -85,6 +85,7 @@ var _View2 = _interopRequireDefault(_View);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // If this is an initial entry (user enters URL with query param for the project ID) redirect to begin oauth implicit grant process
+// This is the project ID number entered into the URL by the user
 var projectParam = (0, _queryParam2.default)("project");
 if (projectParam) {
   window.location = "https://app.asana.com/-/oauth_authorize?" + "client_id=579903436341269&" + "redirect_uri=http://localhost:3000/" + "&response_type=token&" + "state=" + projectParam;
@@ -103,7 +104,7 @@ model.fetchProjectName().then(function (projectName) {
   view.populateHeaderTitle(projectName);
 });
 
-// Perform get requests for tasks data and render those along with event listeners
+// Perform get requests for tasks data and paint those along with adding event listeners
 model.fetchTasks().then(function (tasks) {
   view.renderTasks(tasks, projectId);
   view.bindTaskVisibility();
@@ -129,9 +130,9 @@ function getParameterByName(key) {
 
 exports.default = getParameterByName;
 
-// query string: ?foo=lorem&bar=&baz
+// USAGE: query string on URL: ?foo=lorem&bar=&baz
 // var foo = getParameterByName('foo');
-// returns "lorem"
+// foo holds the value "lorem"
 
 /***/ }),
 /* 2 */
@@ -143,67 +144,47 @@ exports.default = getParameterByName;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+function Model(projectId, accessToken) {
+  // common root URL for getting project info from the API
+  this.apiRootUrl = 'https://app.asana.com/api/1.0/projects/' + projectId;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Model = function () {
-  function Model(projectId, accessToken) {
-    _classCallCheck(this, Model);
-
-    this.apiRootUrl = 'https://app.asana.com/api/1.0/projects/' + projectId;
-    this.createAuthHeader(accessToken);
+  // create standard authorization header for requests to API
+  // pass access_token from successful oauth redirect param into header
+  function createAuthHeader(accessToken) {
+    var header = new Headers();
+    header.append('Authorization', 'Bearer ' + accessToken);
+    return header;
   }
+  this.header = createAuthHeader(accessToken);
 
-  // pass access_token from oauth as a header to the API
+  // fetch the project's name from API
+  this.fetchProjectName = function () {
+    return fetch(this.apiRootUrl, {
+      method: 'GET',
+      headers: this.header
+    })
+    // standard protocol of es6 fetch to convert response object
+    .then(function (response) {
+      return response.json();
+    }).then(function (json) {
+      var projectName = json.data.name;
+      return projectName;
+    });
+  };
 
-
-  _createClass(Model, [{
-    key: 'createAuthHeader',
-    value: function createAuthHeader(accessToken) {
-      this.header = new Headers();
-      this.header.append('Authorization', 'Bearer ' + accessToken);
-      return false;
-    }
-
-    // fetch the project's name from API
-
-  }, {
-    key: 'fetchProjectName',
-    value: function fetchProjectName() {
-      return fetch(this.apiRootUrl, {
-        method: 'GET',
-        headers: this.header
-      })
-      // standard protocol of es6 fetch to convert response object
-      .then(function (response) {
-        return response.json();
-      }).then(function (json) {
-        var projectName = json.data.name;
-        return projectName;
-      });
-    }
-
-    // fetch the project's list of tasks from API
-
-  }, {
-    key: 'fetchTasks',
-    value: function fetchTasks() {
-      return fetch(this.apiRootUrl + '/tasks?limit=100', {
-        method: 'GET',
-        headers: this.header
-      }).then(function (response) {
-        return response.json();
-      }).then(function (json) {
-        var tasks = json.data;
-        return tasks;
-      });
-    }
-  }]);
-
-  return Model;
-}();
+  // fetch the project's list of tasks from API
+  this.fetchTasks = function () {
+    return fetch(this.apiRootUrl + '/tasks?limit=100', {
+      method: 'GET',
+      headers: this.header
+    }).then(function (response) {
+      return response.json();
+    }).then(function (json) {
+      var tasks = json.data;
+      return tasks;
+    });
+  };
+}
 
 exports.default = Model;
 
@@ -218,18 +199,19 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 function View() {
-
+  // populate the project name
   this.populateHeaderTitle = function (text) {
     var headerTitle = document.getElementsByClassName("header__project-name")[0];
     headerTitle.innerHTML = text;
   };
 
+  // build tasks individually and append them to tasks container
   this.renderTasks = function (data, projectId) {
     var taskContainer = document.getElementById("tasks");
 
-    // build tasks and append them to tasks container
+    // loop over task array
     data.forEach(function (asanaTask) {
-      // individual task container
+      // building individual task container
       var task = document.createElement("div");
       task.className += "task";
       // set behavior for clicking on individual task, _blank indicates new window
@@ -249,7 +231,7 @@ function View() {
     });
   };
 
-  // Check to see if individual element is in view, "private" function
+  // Check to see if individual element is in view
   function inView(el) {
     var containerPosition = document.getElementById("tasks").getBoundingClientRect();
     var getTaskPosition = el.getBoundingClientRect();
@@ -257,7 +239,7 @@ function View() {
     return containerPosition.height > getTaskPosition.top;
   }
 
-  // Add task--inview to tasks to make visible if in view (don't remove class to indicate it was previously viewed), "private" function
+  // Add task--inview to tasks to make visible if in view (don't remove class to indicate it was previously viewed)
   function updateInView() {
     var tasks = document.querySelectorAll(".task");
     for (var i = 0; i < tasks.length; ++i) {
@@ -278,12 +260,11 @@ function View() {
     var hide_icons = document.getElementsByClassName("task__hide");
 
     for (var i = 0; i < hide_icons.length; ++i) {
-      console.log("STUFF");
       hide_icons[i].onclick = function () {
         this.parentNode.parentNode.removeChild(this.parentNode);
         // fire to repaint since elements have changed position
         updateInView();
-        // prevent task click from opening asana
+        // prevent other click events (like opening a new window)
         event.stopPropagation();
         return false;
       };

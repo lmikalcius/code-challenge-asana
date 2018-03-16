@@ -3,6 +3,7 @@ import Model from "./modules/Model";
 import View from "./modules/View";
 
 // If this is an initial entry (user enters URL with query param for the project ID) redirect to begin oauth implicit grant process
+// This is the project ID number entered into the URL by the user
 var projectParam = getParameterByName("project")
 if (projectParam) {
   window.location = "https://app.asana.com/-/oauth_authorize?" +
@@ -26,7 +27,7 @@ model.fetchProjectName().then(function(projectName) {
   view.populateHeaderTitle(projectName);
 });
 
-// Perform get requests for tasks data and render those along with event listeners
+// Perform get requests for tasks data and paint those along with adding event listeners
 model.fetchTasks().then(function(tasks) {
   view.renderTasks(tasks, projectId);
   view.bindTaskVisibility();

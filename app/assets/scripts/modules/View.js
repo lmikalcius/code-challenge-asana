@@ -1,16 +1,17 @@
 function View() {
-
+  // populate the project name
   this.populateHeaderTitle = function(text) {
     var headerTitle = document.getElementsByClassName("header__project-name")[0];
     headerTitle.innerHTML = text;
   };
 
+  // build tasks individually and append them to tasks container
   this.renderTasks = function (data, projectId) {
     var taskContainer =  document.getElementById("tasks");
 
-    // build tasks and append them to tasks container
+    // loop over task array
     data.forEach(function(asanaTask){
-      // individual task container
+      // building individual task container
       var task = document.createElement("div");
       task.className += "task";
       // set behavior for clicking on individual task, _blank indicates new window
@@ -27,11 +28,10 @@ function View() {
       task.appendChild(taskTitle);
       task.appendChild(closeIcon);
       taskContainer.appendChild(task);
-
     });
   }
 
-  // Check to see if individual element is in view, "private" function
+  // Check to see if individual element is in view
   function inView (el) {
     var containerPosition = document.getElementById("tasks").getBoundingClientRect();
     var getTaskPosition = el.getBoundingClientRect();
@@ -39,7 +39,7 @@ function View() {
     return containerPosition.height > getTaskPosition.top;
   }
 
-  // Add task--inview to tasks to make visible if in view (don't remove class to indicate it was previously viewed), "private" function
+  // Add task--inview to tasks to make visible if in view (don't remove class to indicate it was previously viewed)
   function updateInView() {
     var tasks = document.querySelectorAll(".task")
     for (var i = 0; i < tasks.length; ++i) {
@@ -60,12 +60,11 @@ function View() {
     var hide_icons = document.getElementsByClassName("task__hide");
 
     for (var i = 0; i < hide_icons.length; ++i) {
-      console.log("STUFF")
       hide_icons[i].onclick = function(){
         this.parentNode.parentNode.removeChild(this.parentNode);
         // fire to repaint since elements have changed position
         updateInView();
-        // prevent task click from opening asana
+        // prevent other click events (like opening a new window)
         event.stopPropagation();
         return false;
       };

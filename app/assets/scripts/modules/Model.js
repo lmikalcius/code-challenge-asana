@@ -1,18 +1,18 @@
-class Model {
-  constructor(projectId, accessToken) {
-    this.apiRootUrl = 'https://app.asana.com/api/1.0/projects/' + projectId;
-    this.createAuthHeader(accessToken);
-  }
+function Model(projectId, accessToken) {
+  // common root URL for getting project info from the API
+  this.apiRootUrl = 'https://app.asana.com/api/1.0/projects/' + projectId;
 
-  // pass access_token from oauth as a header to the API
-  createAuthHeader(accessToken) {
-    this.header = new Headers();
-    this.header.append('Authorization', 'Bearer ' + accessToken);
-    return false;
+  // create standard authorization header for requests to API
+  // pass access_token from successful oauth redirect param into header
+  function createAuthHeader(accessToken) {
+    var header = new Headers();
+    header.append('Authorization', 'Bearer ' + accessToken);
+    return header;
   }
+  this.header = createAuthHeader(accessToken);
 
   // fetch the project's name from API
-  fetchProjectName() {
+  this.fetchProjectName = function() {
     return fetch(this.apiRootUrl, {
       method: 'GET',
       headers: this.header,
@@ -28,7 +28,7 @@ class Model {
   }
 
   // fetch the project's list of tasks from API
-  fetchTasks() {
+  this.fetchTasks = function() {
     return fetch(this.apiRootUrl + '/tasks?limit=100', {
         method: 'GET',
         headers: this.header,
