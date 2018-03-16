@@ -8,7 +8,7 @@ var projectParam = getParameterByName("project")
 if (projectParam) {
   window.location = "https://app.asana.com/-/oauth_authorize?" +
                     "client_id=579903436341269&" +
-                    "redirect_uri=http://localhost:3000/" +
+                    "redirect_uri=https://lmikalcius.github.io/code-challenge-asana/" +
                     "&response_type=token&" +
                     "state=" + projectParam;
 }

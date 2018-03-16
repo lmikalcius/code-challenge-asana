@@ -88,7 +88,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // This is the project ID number entered into the URL by the user
 var projectParam = (0, _queryParam2.default)("project");
 if (projectParam) {
-  window.location = "https://app.asana.com/-/oauth_authorize?" + "client_id=579903436341269&" + "redirect_uri=http://localhost:3000/" + "&response_type=token&" + "state=" + projectParam;
+  window.location = "https://app.asana.com/-/oauth_authorize?" + "client_id=579903436341269&" + "redirect_uri=https://lmikalcius.github.io/code-challenge-asana/" + "&response_type=token&" + "state=" + projectParam;
 }
 
 // If this is after an oauth redirect, create variables for access_token and project id (stored in state query param from oauth redirect) to pass to the model
